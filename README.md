@@ -1,187 +1,184 @@
-Content Creator Link Hub
+# Content Creator Link Hub
+
 A searchable link directory website for content creators. Solves the problem of sharing multiple links when you only have space for one in your bio.
 
-The Problem
+## The Problem
+
 As a content creator with 276K followers, I faced these issues:
+- Instagram bio only allows one link
+- Cannot manually send links to everyone
+- Followers struggle to find specific content
+- Existing tools lack proper search functionality
 
-Instagram bio only allows one link
+So this project was created to fix that.
 
-Cannot manually send links to everyone
+## What It Does
 
-Followers struggle to find specific content
+A simple website where followers can search for any link they need. You update one config file, they search, and get the link instantly.
 
-Existing tools lack proper search functionality
+## Features
 
-So I built this.
+- Real-time search with keyword matching
+- Highlighted search results in titles and descriptions
+- Custom thumbnail image for each link
+- Social media profile links
+- Customizable dark theme
+- Mobile-friendly layout
+- Footer pages for copyright, privacy, and disclaimer
+- No database, no backend, just static files
 
-What It Does
-A simple website where your followers can search for any link they need. You update one file, they search and get the link instantly.
+## How to Use
 
-Features
-Real-time search with keyword matching
+### 1. Set Up Your Profile
 
-Highlighted search results
+Open `data.js` and edit these fields:
 
-Custom thumbnails for each link
-
-Social media integration
-
-Customizable color theme
-
-Mobile-friendly design
-
-Footer pages for copyright, privacy, and disclaimer
-
-No database or backend needed
-
-How to Use
-1. Setup Your Profile
-Edit data.js and change:
-
-javascript
 siteTitle: "Your Name",
 profileUrl: "https://www.instagram.com/yourhandle",
 profilePhotoUrl: "Assets/Profile photo/profile.jpg",
-Add your social media links:
 
-javascript
-socialMedia: {
-  instagram: "https://www.instagram.com/yourhandle",
-  youtube: "https://www.youtube.com/@yourchannel",
-  telegram: "https://t.me/yourhandle"
-}
-2. Add Your Links
-In data.js, add links like this:
-
-javascript
-{
-  id: "premiere-pro",
-  title: "Premiere Pro",
-  description: "Professional video editing software",
-  keywords: ["premiere", "video editor", "adobe", "editing"],
-  thumbnail: "Assets/Links thumbnail/premiere.webp",
-  buttonText: "Download",
-  ctaText: "Follow @your_handle to download",
-  followRedirectUrl: "https://example.com/premiere",
-  priority: 1,
-  visible: true
-}
-3. Add Images
-Put your images in the right folders:
-
-Profile Photo:
-
-Location: Assets/Profile photo/profile.jpg
-
-Size: 400x400px
-
-Format: JPG or PNG
-
-Link Thumbnails:
-
-Location: Assets/Links thumbnail/
-
-Size: 256x256px
-
-Format: PNG for icons, JPG for photos
-
-4. Customize Colors
-Change the theme colors in data.js:
-
-javascript
-theme: {
-  backgroundPrimary: "#000000",
-  accentPrimary: "#8b5cf6",
-  accentSecondary: "#7c3aed"
-}
-5. Deploy
-Upload all files to:
-
-GitHub Pages
-
-Netlify
-
-Vercel
-
-Any web hosting
-
-File Structure
 text
+
+Update your social media links:
+
+socialMedia: {
+instagram: "https://www.instagram.com/yourhandle",
+youtube: "https://www.youtube.com/@yourchannel",
+telegram: "https://t.me/yourhandle"
+}
+
+text
+
+### 2. Add Your Links
+
+In `data.js`, each link is an object inside the `links` array:
+
+{
+id: "premiere-pro",
+title: "Premiere Pro",
+description: "Professional video editing software",
+keywords: ["premiere", "video editor", "adobe", "editing"],
+thumbnail: "Assets/Links thumbnail/premiere.webp",
+buttonText: "Download",
+ctaText: "Follow @your_handle to download",
+followRedirectUrl: "https://example.com/premiere",
+priority: 1,
+visible: true
+}
+
+text
+
+- `id`: unique id (no spaces)
+- `title`: name of the link
+- `description`: short description
+- `keywords`: words users might search for
+- `thumbnail`: path to thumbnail image
+- `buttonText`: text on the button
+- `ctaText`: message shown in the modal
+- `followRedirectUrl`: where the button redirects
+- `priority`: lower number = shown higher
+- `visible`: set to `false` to hide a link
+
+### 3. Add Images
+
+Place your images in these folders:
+
+- Profile photo  
+  - Path: `Assets/Profile photo/profile.jpg`  
+  - Size: 400x400 px  
+  - Format: JPG or PNG  
+
+- Link thumbnails  
+  - Path: `Assets/Links thumbnail/`  
+  - Size: 256x256 px  
+  - Format: PNG for icons, JPG for photos  
+
+Update the `thumbnail` field in each link object to match your filenames.
+
+### 4. Customize Theme
+
+Change basic colors in `data.js`:
+
+theme: {
+backgroundPrimary: "#000000",
+accentPrimary: "#8b5cf6",
+accentSecondary: "#7c3aed"
+}
+
+text
+
+These values control the background and accent colors used in the UI.
+
+### 5. Deploy
+
+This is a static site, so you can host it anywhere:
+
+- GitHub Pages
+- Netlify
+- Vercel
+- Any static web hosting
+
+Upload all project files, then share the main URL in your bio.
+
+## File Structure
+
 Project/
 ├── index.html
 ├── styles.css
 ├── app.js
-├── data.js (edit this file)
+├── data.js # main config file you edit
 ├── Assets/
-│   ├── Profile photo/
-│   │   └── profile.jpg (400x400px)
-│   └── Links thumbnail/
-│       └── your-images.png (256x256px)
+│ ├── Profile photo/
+│ │ └── profile.jpg # 400x400
+│ └── Links thumbnail/
+│ └── your-images.png # 256x256
 ├── copyright.html
 ├── privacy.html
 └── disclaimer.html
-How It Works
-Followers visit your link hub
 
-They search for what they need using keywords
+text
 
-Results show up instantly with highlighted matches
+## How It Works
 
-They click to get the link
+- `data.js` holds profile data, theme, social links, and all link items.
+- `index.html` loads `data.js` and `app.js`.
+- `app.js` reads `window.SITE_DATA`, builds the cards, and wires up search, modals, and footer pages.
+- `styles.css` controls the dark UI, responsive layout, and animations.
 
-Search Features
-Searches in title, description, and keywords
+## Search Behaviour
 
-Shows highlighted matches
+- Searches inside `title`, `description`, and `keywords`.
+- Matches are highlighted in the text.
+- Works as you type, with a small delay to keep it smooth.
+- Can handle small typos thanks to fuzzy matching.
 
-Works in real-time as you type
+## Customization Options
 
-Fuzzy search for typos
+You can easily tweak:
 
-Customization
-Everything is customizable:
+- Colors (via `theme` in `data.js`)
+- Number of results (via `maxResults` in `data.js`)
+- Button texts and CTA messages
+- Social icons shown in the header
+- Legal pages content (`copyright.html`, `privacy.html`, `disclaimer.html`)
 
-Colors and theme
+## Tech Stack
 
-Profile photo
+- HTML
+- CSS
+- Vanilla JavaScript
+- Client-side search (Fuse-style fuzzy search)
+- No build tools or frameworks required
 
-Social media links
+## For Content Creators
 
-Link thumbnails
+Designed for:
 
-Button text
+- Instagram and Reels creators
+- YouTube and Shorts creators
+- Tech and gaming creators
+- Anyone who shares tools, apps, or resources with followers
 
-Search result limit
+## License
 
-Tech Details
-Built with simple HTML, CSS, and JavaScript. Uses Fuse.js for search functionality. No frameworks or complicated setup needed.
-
-Requirements
-Just a web browser and basic text editor. No coding knowledge required to add links.
-
-Deploy to GitHub Pages
-Upload all files to this repository
-
-Go to Settings > Pages
-
-Select main branch
-
-Your site will be live at username.github.io/repo-name
-
-For Content Creators
-Perfect for:
-
-Instagram creators
-
-YouTube creators
-
-Tech reviewers
-
-Anyone sharing resources with followers
-
-Made By
-A tech content creator who needed a simple solution for link sharing.
-
-License
-Free to use and modify for your own projects.
-
+You are free to use, modify, and adapt this project for your own link hub.
