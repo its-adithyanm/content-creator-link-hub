@@ -120,21 +120,29 @@ This is a static site, so you can host it anywhere:
 
 Upload all project files, then share the main URL in your bio.
 
-## File Structure
-
-Project/
-├── index.html
-├── styles.css
-├── app.js
-├── data.js # main config file you edit
+content-creator-link-hub/
+│
+├── index.html              # Main page
+├── styles.css              # All styling
+├── app.js                  # Search and UI logic
+├── data.js                 # Edit this - your links and config
+│
 ├── Assets/
-│ ├── Profile photo/
-│ │ └── profile.jpg # 400x400
-│ └── Links thumbnail/
-│ └── your-images.png # 256x256
-├── copyright.html
-├── privacy.html
-└── disclaimer.html
+│   ├── Profile photo/
+│   │   └── profile.jpg     # 400x400px - your profile picture
+│   │
+│   └── Links thumbnail/
+│       ├── premiere.webp   # 256x256px - link thumbnails
+│       ├── aftereffects.webp
+│       ├── capcut.webp
+│       ├── gaming.webp
+│       ├── automation.webp
+│       └── resources.webp
+│
+├── copyright.html          # Copyright page
+├── privacy.html            # Privacy policy page
+└── disclaimer.html         # Disclaimer page
+
 
 text
 
