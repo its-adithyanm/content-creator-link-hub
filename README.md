@@ -1,44 +1,79 @@
 # Content Creator Link Hub
 
 A premium searchable link hub built for modern content creators.
-Designed to solve the “one bio link” problem while giving followers a smooth and interactive experience.
+
+Designed to solve the “one bio link” problem while giving followers a smooth, searchable, and interactive experience.
 
 ---
 
-# NEW UPDATES & FEATURES
+# Why This Project Exists
 
-The project has been significantly upgraded with premium UI interactions, smarter link handling, AI prompt support, animated verification flows, and built-in support tools.
+As a content creator with a large audience, I faced a real problem:
 
-## What's New
+* Instagram bio only allows one link
+* Followers constantly ask for resources
+* Manually sending links to everyone is impossible
+* Existing “link in bio” tools lacked proper search functionality
+* Instagram automation systems can sometimes get restricted or limited
 
-### AI Prompt Link System
+So instead of depending entirely on automation tools, I built my own searchable link hub where followers can instantly find the exact resource they need.
+
+This project was made mainly for personal use and creator workflow optimization.
+
+---
+
+# What This Website Does
+
+This is a fully static searchable resource hub where users can:
+
+* Search resources instantly
+* Access download links
+* Open AI prompts
+* Follow social links
+* Submit support requests
+* Navigate premium modal-based flows
+
+Everything is managed from a single `data.js` file.
+
+No backend required.
+
+---
+
+# NEW FEATURES & UPDATES
+
+## AI Prompt Modal System
 
 Links can now optionally contain AI prompts instead of direct downloads.
 
-New optional field in `data.js`:
+New optional field inside `data.js`:
 
-```js
+```js id="nrpruq"
 promptText: "Your AI prompt here..."
 ```
 
-How it works:
+### How It Works
 
-* If a link contains `promptText`, clicking “Already Following” opens a premium prompt modal.
+If a link contains `promptText`:
+
+* Clicking “Already Following” opens a premium AI prompt modal
 * Users can:
 
-  * View the full AI prompt
-  * Scroll through long prompts
+  * Read prompts
+  * Scroll long content
   * Copy prompts instantly
-  * Close the modal smoothly
-* Existing redirect links still work normally.
-* Links without `promptText` continue using the original redirect system.
+  * Close smoothly
 
-This allows the website to work as:
+If `promptText` is NOT provided:
 
-* Resource hub
-* AI prompt library
-* Creator toolkit
-* Download center
+* Original redirect behavior continues normally
+
+This allows the project to work as:
+
+* AI Prompt Library
+* Resource Hub
+* Tool Directory
+* Creator Toolkit
+* Download Center
 
 without changing the core structure.
 
@@ -46,54 +81,56 @@ without changing the core structure.
 
 ## Premium Follow Verification Flow
 
-The old instant redirect system has been upgraded.
+The original instant redirect system has been upgraded into a premium verification experience.
 
 ### New Flow
 
-When users click:
+User clicks resource →
+“Follow to Continue” modal opens →
+User clicks “Already Following” →
+Verification animation starts →
+Success tick animation →
+Automatic redirect
 
-```text
-Already Following
-```
+### Verification UI Includes
 
-they now see:
-
-* Animated verification modal
-* Circular loading spinner
-* “Verifying you are following...” message
-* 3-second premium verification animation
-* Animated success tick mark
-* Automatic redirect after verification
-
-This creates a much smoother and more premium user experience.
+* Animated loading spinner
+* “Verifying you are following...” state
+* Smooth fade transitions
+* Animated success tick
+* Auto redirect after 3 seconds
 
 ### Important
 
 This is a simulated verification flow.
-No Instagram API or third-party verification service is used.
+
+No Instagram API or third-party verification system is used.
+
+The purpose is simply to improve UX and encourage creator follows.
 
 ---
 
-## Built-In Support Form System
+## Built-In Support Request System
 
-A fully custom support request modal has been added.
+A fully custom support modal has been added.
 
 ### Features
 
 * Floating support button
-* Premium popup modal
+* Dark premium popup modal
 * Name field
 * Email field
 * Problem/message textarea
-* Real-time validation
-* Loading animation
-* Success state with animated tick
-* Error state with retry button
+* Smooth animations
+* Validation states
+* Loading state
+* Success state
+* Retry/error state
 * Mobile responsive design
 
 ### Google Forms Integration
 
-Submissions are automatically sent directly into Google Forms using hidden form entry mapping.
+Support submissions are automatically sent into Google Forms using hidden form field mappings.
 
 No backend or database required.
 
@@ -101,7 +138,7 @@ No backend or database required.
 
 ## Legal Pages System
 
-The project now includes fully integrated legal pages:
+Integrated legal pages include:
 
 * Privacy Policy
 * Disclaimer
@@ -109,57 +146,102 @@ The project now includes fully integrated legal pages:
 
 ### Improvements
 
-* Proper modal/page loading
-* Static HTML fallback support
-* Better local file handling
-* Mobile responsive formatting
-* Premium dark styling
+* Better modal loading
+* Local static file support
+* Responsive formatting
+* Smooth animations
+* Dark UI integration
 
 ---
 
-# Updated Features List
+# Features
 
-## Features
-
-* Real-time search with keyword matching
+* Real-time search
+* Fuzzy keyword matching
 * Highlighted search results
 * AI prompt modal system
-* Premium follow verification flow
-* Custom thumbnails for every link
-* Google Forms powered support system
+* Premium verification flow
+* Support request popup
+* Google Forms integration
+* Custom thumbnails
+* Responsive design
 * Floating support action button
 * Smooth modal animations
-* Animated success/error states
-* Social media profile links
-* Responsive dark theme
+* Social profile links
 * Footer legal pages
-* Fuzzy search support
-* Static hosting friendly
+* Dark premium UI
+* Static hosting support
 * No backend required
 
 ---
 
-# Updated Link Structure
+# Project Structure
 
-Each link inside `data.js` now supports:
+```text id="jvfy6n"
+content-creator-link-hub/
+│
+├── index.html
+├── styles.css
+├── app.js
+├── data.js
+│
+├── Assets/
+│   ├── Profile photo/
+│   └── Links thumbnail/
+│
+├── copyright.html
+├── privacy.html
+└── disclaimer.html
+```
 
-```js
+---
+
+# How To Use
+
+## 1. Configure Your Profile
+
+Open `data.js`:
+
+```js id="v73ay0"
+siteTitle: "Your Name",
+profileUrl: "https://instagram.com/yourhandle",
+profilePhotoUrl: "Assets/Profile photo/profile.jpg",
+```
+
+Update social links:
+
+```js id="zw7l9m"
+socialMedia: {
+  instagram: "",
+  youtube: "",
+  telegram: "",
+  linkedin: "",
+  facebook: ""
+}
+```
+
+---
+
+## 2. Add Resource Links
+
+Example:
+
+```js id="bkg5j4"
 {
-  id: "chatgpt-prompt",
-  title: "ChatGPT Prompt Pack",
-  description: "Advanced AI prompts for creators",
-  keywords: ["chatgpt", "ai", "prompt"],
-  thumbnail: "Assets/Links thumbnail/prompt.webp",
+  id: "premiere-pro",
+  title: "Premiere Pro",
+  description: "Professional video editing software",
+  keywords: ["premiere", "editing", "video"],
+  thumbnail: "Assets/Links thumbnail/premiere.webp",
 
-  buttonText: "Get Prompt",
+  buttonText: "Download",
 
   ctaText: "Follow @snap_blitz to continue",
 
   followRedirectUrl: "https://example.com",
 
   promptText: `
-    Write a cinematic YouTube intro
-    with dark neon aesthetics...
+    Optional AI prompt text here
   `,
 
   priority: 1,
@@ -167,37 +249,80 @@ Each link inside `data.js` now supports:
 }
 ```
 
-## New Optional Field
+---
 
-| Field        | Description                                   |
-| ------------ | --------------------------------------------- |
-| `promptText` | Opens prompt modal instead of direct redirect |
+# Link Fields
 
-If `promptText` is missing:
-
-* Original redirect behavior remains unchanged.
+| Field               | Description              |
+| ------------------- | ------------------------ |
+| `id`                | Unique identifier        |
+| `title`             | Resource title           |
+| `description`       | Resource description     |
+| `keywords`          | Search keywords          |
+| `thumbnail`         | Thumbnail image path     |
+| `buttonText`        | Button text              |
+| `ctaText`           | Modal CTA message        |
+| `followRedirectUrl` | Redirect destination     |
+| `promptText`        | Optional AI prompt modal |
+| `priority`          | Sorting priority         |
+| `visible`           | Hide/show resource       |
 
 ---
 
-# Performance & Scalability
+# Search Behaviour
 
-The website is optimized for large link collections.
+Search works inside:
 
-### Supported
+* title
+* description
+* keywords
+
+### Features
+
+* Real-time filtering
+* Fuzzy matching
+* Highlighted matches
+* Smooth rendering
+* Debounced input for performance
+
+---
+
+# Scalability
+
+The project is optimized to support:
 
 * Hundreds of links
 * Large keyword lists
-* Fast search filtering
-* Real-time rendering
+* Large AI prompt libraries
+* Creator resource directories
 
-### Optimizations
+### Performance Optimizations
 
-* Debounced search
-* Lazy rendering logic
 * Efficient filtering
-* Lightweight vanilla JS architecture
+* Lightweight rendering
+* Debounced searching
+* Vanilla JS architecture
+* No unnecessary frameworks
 
-The project can scale to large resource libraries without requiring a backend.
+Even large collections should perform smoothly on static hosting.
+
+---
+
+# Customization
+
+You can easily customize:
+
+* Theme colors
+* Accent colors
+* Button texts
+* CTA messages
+* Search behavior
+* Social links
+* Legal page content
+* Prompt modal styles
+* Support modal styles
+
+All mainly controlled through `data.js` and `styles.css`.
 
 ---
 
@@ -210,55 +335,68 @@ The project can scale to large resource libraries without requiring a backend.
 * Google Forms integration
 * Static hosting architecture
 
-No frameworks or build tools required.
-
----
-
-# Perfect For
-
-* Instagram creators
-* AI prompt sellers
-* Digital product creators
-* YouTube creators
-* Tool curators
-* Resource directories
-* Gaming creators
-* Educational creators
-* Automation creators
-
----
-
-# Why This Project Exists
-
-Most “link in bio” tools are:
-
-* cluttered,
-* slow,
-* limited,
-* or lack search functionality.
-
-This project was built to create a:
-
-* searchable,
-* scalable,
-* creator-focused,
-* premium-feeling link hub
-
-that works entirely with static hosting.
+No frameworks.
+No backend.
+No database.
 
 ---
 
 # Hosting
 
-Can be deployed easily on:
+Can be deployed on:
 
 * GitHub Pages
 * Netlify
 * Vercel
 * Cloudflare Pages
-* Any static host
+* Any static web host
 
-No server required.
+---
+
+# Developer Note
+
+This project was created mainly using AI tools and vibe-coding workflows.
+
+I am not a professional developer and do not have deep coding knowledge.
+
+This project was built to solve a real personal creator problem as quickly and practically as possible.
+
+Most of the development process involved:
+
+* AI coding tools
+* ChatGPT
+* experimentation
+* self-learning
+* trial and error
+* real-world creator needs
+
+Because this project was heavily AI-assisted and vibe-coded, there may still be:
+
+* bugs,
+* imperfect code,
+* UI inconsistencies,
+* edge-case issues,
+* scalability limitations,
+* or non-optimal engineering decisions.
+
+The main goal was functionality and usefulness, not perfect software engineering.
+
+This tool was created primarily for self-use because Instagram automation systems and platform restrictions can sometimes interfere with resource sharing workflows.
+
+Instead of relying completely on automation tools, I built a searchable static resource hub for my followers.
+
+If you are a developer and want to:
+
+* improve the code,
+* optimize performance,
+* fix bugs,
+* improve UI/UX,
+* add features,
+* or contribute in any way,
+
+your help is genuinely appreciated.
+
+Community improvements and pull requests are always welcome.
 
 ---
 
