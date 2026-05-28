@@ -1,9 +1,8 @@
 // data.js - Edit this file to update content
 
 window.SITE_DATA = {
-    siteTitle: "Snap Blitz [beta]",
+    siteTitle: "Snap Blitz",
     profileUrl: "https://www.instagram.com/snap_blitz",
-    helpFormUrl: "https://forms.gle/your-form-id",
     defaultButtonText: "Get Link",
     maxResults: 50,
 
@@ -96,6 +95,31 @@ window.SITE_DATA = {
             ctaText: "Follow @snap_blitz for free resources",
             followRedirectUrl: "https://t.me/snap_blitz/438",
             priority: 6,
+            visible: true
+        },
+        {
+            id: "viral-reels-prompt",
+            type: "prompt",
+            title: "Viral Reel Prompt",
+            description: "AI prompt for viral Instagram reels",
+            keywords: ["chatgpt", "prompt", "instagram"],
+            thumbnail: "Assets/Links thumbnail/prompt.webp",
+            buttonText: "Get Prompt",
+            ctaText: "Follow @snap_blitz to unlock this AI prompt",
+            promptText: "Act as an expert social media strategist and content creator specializing in Instagram Reels. Your task is to generate 10 highly engaging and viral reel concepts tailored for a tech content creator.\n\nFirst, analyze the current trending audio tracks and formats within the tech niche (e.g., fast-paced unboxings, 'day in the life' vlogs, hidden features tutorials). For each concept, provide a catchy hook for the first 3 seconds to maximize viewer retention.\n\nNext, write a detailed script or shot list for each idea. Specify the exact camera angles (e.g., top-down for desk setups, close-up for product textures) and lighting suggestions (e.g., neon cyberpunk lighting, clean minimal daylight).\n\nThen, outline the caption for each reel. Include SEO-optimized keywords seamlessly integrated into the text, along with a strong Call-To-Action (CTA) encouraging viewers to save the video or comment a specific keyword for an auto-DM link.\n\nFinally, suggest a list of 5-7 targeted hashtags for each concept that balance broad reach with niche engagement, ensuring the content is pushed to the explore page of tech enthusiasts and gadget lovers.",
+            priority: 7,
+            visible: true
+        },
+        {
+            id: "67Movie website",
+            title: "67movies",
+            description: " free website for watching movies and series open this website on brave browser for ad free experience",
+            keywords: ["67Movie", "movies", "Free", "series"],
+            thumbnail: "Assets/Links thumbnail/67Moviewebsite.webp",
+            buttonText: " go to site",
+            ctaText: "Follow @snap_blitz to get the website",
+            followRedirectUrl: "https://67movies.net",
+            priority: 8,
             visible: true
         }
     ]

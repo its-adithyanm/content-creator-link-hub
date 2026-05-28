@@ -7,6 +7,7 @@
 
     let fuse = null;
     let currentLinks = [];
+    let currentRenderedResults = [];
     let searchDebounceTimer = null;
     const DEBOUNCE_DELAY = 150;
 
@@ -23,6 +24,11 @@
     const modalCta = document.getElementById('modalCta');
     const modalVisitProfile = document.getElementById('modalVisitProfile');
     const modalFollowRedirect = document.getElementById('modalFollowRedirect');
+    const followActionState = document.getElementById('followActionState');
+    const followLoadingState = document.getElementById('followLoadingState');
+    const followSuccessState = document.getElementById('followSuccessState');
+    const followErrorState = document.getElementById('followErrorState');
+    const followRetryBtn = document.getElementById('followRetryBtn');
     const footerModalOverlay = document.getElementById('footerModalOverlay');
     const footerModalClose = document.getElementById('footerModalClose');
     const footerModalTitle = document.getElementById('footerModalTitle');
@@ -31,6 +37,22 @@
     const privacyBtn = document.getElementById('privacyBtn');
     const disclaimerBtn = document.getElementById('disclaimerBtn');
     const helpButton = document.getElementById('helpButton');
+    const promptModalOverlay = document.getElementById('promptModalOverlay');
+    const promptModalClose = document.getElementById('promptModalClose');
+    const promptModalTitle = document.getElementById('promptModalTitle');
+    const promptModalText = document.getElementById('promptModalText');
+    const promptModalCopy = document.getElementById('promptModalCopy');
+    const promptModalCopyText = document.getElementById('promptModalCopyText');
+    const supportModalOverlay = document.getElementById('supportModalOverlay');
+    const supportModalClose = document.getElementById('supportModalClose');
+    const supportForm = document.getElementById('supportForm');
+    const supportFormState = document.getElementById('supportFormState');
+    const supportLoadingState = document.getElementById('supportLoadingState');
+    const supportSuccessState = document.getElementById('supportSuccessState');
+    const supportErrorState = document.getElementById('supportErrorState');
+    const supportSuccessCloseBtn = document.getElementById('supportSuccessCloseBtn');
+    const supportErrorCloseBtn = document.getElementById('supportErrorCloseBtn');
+    const supportRetryBtn = document.getElementById('supportRetryBtn');
     const siteTitle = document.getElementById('siteTitle');
     const profilePhoto = document.getElementById('profilePhoto');
     const socialIcons = document.getElementById('socialIcons');
@@ -52,7 +74,7 @@
     }
 
     function applySiteConfig() {
-        const { siteTitle: title, helpFormUrl, theme, profilePhotoUrl, socialMedia } = window.SITE_DATA;
+        const { siteTitle: title, theme, profilePhotoUrl, socialMedia } = window.SITE_DATA;
 
         if (title) {
             siteTitle.textContent = title;
@@ -70,10 +92,9 @@
             setupSocialLinks(socialMedia);
         }
 
-        if (helpFormUrl) {
-            helpButton.addEventListener('click', () => {
-                window.open(helpFormUrl, '_blank', 'noopener,noreferrer');
-            });
+        // Help button opens custom modal instead of redirecting
+        if (helpButton) {
+            helpButton.addEventListener('click', openSupportModal);
         }
 
         if (theme) {
@@ -126,12 +147,23 @@
     }
 
     function setupEventListeners() {
+        resultsGrid.addEventListener('click', handleGridClick);
+        resultsGrid.addEventListener('keydown', handleGridKeydown);
         searchInput.addEventListener('input', handleSearch);
         clearBtn.addEventListener('click', clearSearch);
         modalClose.addEventListener('click', closeModal);
         modalOverlay.addEventListener('click', handleOverlayClick);
         footerModalClose.addEventListener('click', closeFooterModal);
         footerModalOverlay.addEventListener('click', handleFooterOverlayClick);
+        if (promptModalClose) promptModalClose.addEventListener('click', closePromptModal);
+        if (promptModalOverlay) promptModalOverlay.addEventListener('click', handlePromptOverlayClick);
+        if (supportModalClose) supportModalClose.addEventListener('click', closeSupportModal);
+        if (supportModalOverlay) supportModalOverlay.addEventListener('click', handleSupportOverlayClick);
+        if (supportForm) supportForm.addEventListener('submit', handleSupportFormSubmit);
+        if (supportSuccessCloseBtn) supportSuccessCloseBtn.addEventListener('click', closeSupportModal);
+        if (supportErrorCloseBtn) supportErrorCloseBtn.addEventListener('click', closeSupportModal);
+        if (supportRetryBtn) supportRetryBtn.addEventListener('click', () => showSupportState('form'));
+        if (followRetryBtn) followRetryBtn.addEventListener('click', () => showFollowState('action'));
         document.addEventListener('keydown', handleEscapeKey);
 
         copyrightBtn.addEventListener('click', () => openFooterModal('copyright'));
@@ -180,6 +212,7 @@
 
     function renderResults(results, query = '') {
         resultsGrid.innerHTML = '';
+        currentRenderedResults = results;
 
         if (results.length === 0) {
             showNoResults();
@@ -190,18 +223,22 @@
         showResults();
         showResultsHeader(results.length);
 
+        const fragment = document.createDocumentFragment();
         results.forEach((item, index) => {
             const card = createResultCard(item, query, index);
-            resultsGrid.appendChild(card);
+            fragment.appendChild(card);
         });
+        resultsGrid.appendChild(fragment);
     }
 
     function createResultCard(item, query, index) {
         const card = document.createElement('div');
         card.className = 'result-card';
-        card.style.animationDelay = `${index * 0.05}s`;
+        // Cap animation delay to prevent CPU spike on large lists
+        card.style.animationDelay = `${Math.min(index, 20) * 0.05}s`;
         card.setAttribute('role', 'button');
         card.setAttribute('tabindex', '0');
+        card.dataset.index = index;
 
         const highlightedTitle = highlightMatches(item.title, item.matches, 'title');
         const highlightedDescription = highlightMatches(item.description, item.matches, 'description');
@@ -215,7 +252,7 @@
             </div>
             <p class="card-description">${highlightedDescription}</p>
             <div class="card-action">
-                <button class="action-btn">
+                <button class="action-btn" tabindex="-1">
                     ${buttonText}
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="9 18 15 12 9 6"></polyline>
@@ -224,15 +261,26 @@
             </div>
         `;
 
-        card.addEventListener('click', () => openModal(item));
-        card.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                openModal(item);
-            }
-        });
-
         return card;
+    }
+
+    function handleGridClick(e) {
+        const card = e.target.closest('.result-card');
+        if (!card) return;
+        const index = parseInt(card.dataset.index, 10);
+        const item = currentRenderedResults[index];
+        if (item) openModal(item);
+    }
+
+    function handleGridKeydown(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            const card = e.target.closest('.result-card');
+            if (!card) return;
+            e.preventDefault();
+            const index = parseInt(card.dataset.index, 10);
+            const item = currentRenderedResults[index];
+            if (item) openModal(item);
+        }
     }
 
     function highlightMatches(text, matches, key) {
@@ -294,32 +342,249 @@
         resultsCount.textContent = `${count} result${count !== 1 ? 's' : ''}`;
     }
 
+    function showFollowState(state) {
+        if (!followActionState) return;
+
+        followActionState.style.display = 'none';
+        followLoadingState.style.display = 'none';
+        followSuccessState.style.display = 'none';
+        followErrorState.style.display = 'none';
+
+        followActionState.classList.remove('active');
+        followLoadingState.classList.remove('active');
+        followSuccessState.classList.remove('active');
+        followErrorState.classList.remove('active');
+
+        if (state === 'action') {
+            followActionState.style.display = 'block';
+            setTimeout(() => followActionState.classList.add('active'), 10);
+        } else if (state === 'loading') {
+            followLoadingState.style.display = 'block';
+            setTimeout(() => followLoadingState.classList.add('active'), 10);
+        } else if (state === 'success') {
+            followSuccessState.style.display = 'block';
+            setTimeout(() => followSuccessState.classList.add('active'), 10);
+        } else if (state === 'error') {
+            followErrorState.style.display = 'block';
+            setTimeout(() => followErrorState.classList.add('active'), 10);
+        }
+    }
+
     function openModal(item) {
+        if (isVerifyingFollow) return;
+        
         modalTitle.textContent = item.modalTitle || 'Follow to Continue';
         modalCta.textContent = item.ctaText || 'Follow @snap_blitz to access this resource';
 
         const profileUrl = item.visitProfileUrl || window.SITE_DATA.profileUrl;
         modalVisitProfile.href = profileUrl;
-        modalFollowRedirect.href = item.followRedirectUrl;
+
+        showFollowState('action');
+
+        modalFollowRedirect.onclick = function(e) {
+            e.preventDefault();
+            startFollowVerification(item);
+        };
 
         modalOverlay.classList.add('active');
         document.body.style.overflow = 'hidden';
     }
 
+    function startFollowVerification(item) {
+        if (isVerifyingFollow) return;
+        
+        isVerifyingFollow = true;
+        modalClose.style.pointerEvents = 'none';
+        modalClose.style.opacity = '0.5';
+
+        showFollowState('loading');
+
+        setTimeout(() => {
+            const redirectUrl = item.type === 'prompt' ? '#' : (item.followRedirectUrl || null);
+
+            if (!redirectUrl && item.type !== 'prompt') {
+                showFollowState('error');
+                isVerifyingFollow = false;
+                modalClose.style.pointerEvents = 'all';
+                modalClose.style.opacity = '1';
+                return;
+            }
+
+            showFollowState('success');
+
+            setTimeout(() => {
+                isVerifyingFollow = false;
+                modalClose.style.pointerEvents = 'all';
+                modalClose.style.opacity = '1';
+
+                if (item.type === 'prompt') {
+                    closeModal();
+                    openPromptModal(item);
+                } else {
+                    window.location.href = redirectUrl;
+                }
+            }, 1000); 
+        }, 3000); 
+    }
+
     function closeModal() {
+        if (isVerifyingFollow) return;
         modalOverlay.classList.remove('active');
         document.body.style.overflow = '';
+        setTimeout(() => {
+            if (!modalOverlay.classList.contains('active')) {
+                showFollowState('action');
+            }
+        }, 300);
     }
 
     function handleOverlayClick(e) {
-        if (e.target === modalOverlay) closeModal();
+        if (e.target === modalOverlay && !isVerifyingFollow) closeModal();
     }
+
+    let isSubmittingSupport = false;
+    let isVerifyingFollow = false;
 
     function handleEscapeKey(e) {
         if (e.key === 'Escape') {
-            if (modalOverlay.classList.contains('active')) closeModal();
+            if (modalOverlay.classList.contains('active') && !isVerifyingFollow) closeModal();
             if (footerModalOverlay.classList.contains('active')) closeFooterModal();
+            if (promptModalOverlay && promptModalOverlay.classList.contains('active')) closePromptModal();
+            if (supportModalOverlay && supportModalOverlay.classList.contains('active') && !isSubmittingSupport) closeSupportModal();
         }
+    }
+
+    function showSupportState(state) {
+        if (!supportFormState) return;
+        
+        supportFormState.style.display = 'none';
+        supportLoadingState.style.display = 'none';
+        supportSuccessState.style.display = 'none';
+        supportErrorState.style.display = 'none';
+
+        supportFormState.classList.remove('active');
+        supportLoadingState.classList.remove('active');
+        supportSuccessState.classList.remove('active');
+        supportErrorState.classList.remove('active');
+
+        if (state === 'form') {
+            supportFormState.style.display = 'block';
+            setTimeout(() => supportFormState.classList.add('active'), 10);
+        } else if (state === 'loading') {
+            supportLoadingState.style.display = 'block';
+            setTimeout(() => supportLoadingState.classList.add('active'), 10);
+        } else if (state === 'success') {
+            supportSuccessState.style.display = 'block';
+            setTimeout(() => supportSuccessState.classList.add('active'), 10);
+        } else if (state === 'error') {
+            supportErrorState.style.display = 'block';
+            setTimeout(() => supportErrorState.classList.add('active'), 10);
+        }
+    }
+
+    function openSupportModal() {
+        if (!supportModalOverlay || isSubmittingSupport) return;
+        supportForm.reset();
+        showSupportState('form');
+        supportModalOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeSupportModal() {
+        if (!supportModalOverlay || isSubmittingSupport) return;
+        supportModalOverlay.classList.remove('active');
+        if (!modalOverlay.classList.contains('active') && !footerModalOverlay.classList.contains('active') && (!promptModalOverlay || !promptModalOverlay.classList.contains('active'))) {
+            document.body.style.overflow = '';
+        }
+        // Reset after animation
+        setTimeout(() => {
+            if (!supportModalOverlay.classList.contains('active')) {
+                showSupportState('form');
+                supportForm.reset();
+            }
+        }, 300);
+    }
+
+    function handleSupportOverlayClick(e) {
+        if (e.target === supportModalOverlay && !isSubmittingSupport) closeSupportModal();
+    }
+
+    async function handleSupportFormSubmit(e) {
+        e.preventDefault();
+        
+        const form = e.target;
+        
+        if (!form.checkValidity() || isSubmittingSupport) {
+            form.reportValidity();
+            return;
+        }
+
+        isSubmittingSupport = true;
+        supportModalClose.style.pointerEvents = 'none';
+        supportModalClose.style.opacity = '0.5';
+        
+        showSupportState('loading');
+
+        const formData = new FormData(form);
+        const actionUrl = 'https://docs.google.com/forms/u/0/d/e/1FAIpQLSdQububJJjHQb0NKP2LKUfElITS9DmoUzdzwkGXJ-c1NEffmQ/formResponse';
+        
+        try {
+            // Minimum 1 second loading time for UX + actual fetch
+            await Promise.all([
+                fetch(actionUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: formData
+                }),
+                new Promise(resolve => setTimeout(resolve, 1000))
+            ]);
+
+            showSupportState('success');
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            showSupportState('error');
+        } finally {
+            isSubmittingSupport = false;
+            supportModalClose.style.pointerEvents = 'all';
+            supportModalClose.style.opacity = '1';
+        }
+    }
+
+    function openPromptModal(item) {
+        if (!promptModalOverlay) return;
+        
+        promptModalTitle.textContent = item.title || 'AI Prompt';
+        promptModalText.textContent = item.promptText;
+
+        promptModalCopy.onclick = () => {
+            navigator.clipboard.writeText(item.promptText).then(() => {
+                promptModalCopyText.textContent = 'Copied!';
+                promptModalCopy.style.background = '#10b981';
+                promptModalCopy.style.borderColor = '#10b981';
+                setTimeout(() => {
+                    promptModalCopyText.textContent = 'Copy Prompt';
+                    promptModalCopy.style.background = '';
+                    promptModalCopy.style.borderColor = '';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        };
+
+        promptModalOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closePromptModal() {
+        if (!promptModalOverlay) return;
+        promptModalOverlay.classList.remove('active');
+        if (!modalOverlay.classList.contains('active') && !footerModalOverlay.classList.contains('active')) {
+            document.body.style.overflow = '';
+        }
+    }
+
+    function handlePromptOverlayClick(e) {
+        if (e.target === promptModalOverlay) closePromptModal();
     }
 
     function clearSearch() {
@@ -351,11 +616,35 @@
         footerModalTitle.textContent = title;
         
         try {
-            const response = await fetch(file);
-            const content = await response.text();
-            footerModalContent.innerHTML = content;
+            const response = await fetch(`./${file}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const htmlText = await response.text();
+            
+            // Extract ONLY the body content to prevent injecting <html> and <head> tags
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlText, 'text/html');
+            const bodyContent = doc.body.innerHTML || htmlText;
+            
+            footerModalContent.innerHTML = bodyContent;
         } catch (error) {
-            footerModalContent.innerHTML = '<p>Content not available.</p>';
+            console.error(`Error loading footer content (${file}):`, error);
+            
+            // Check if it's likely a local file protocol issue
+            const isLocal = window.location.protocol === 'file:';
+            
+            footerModalContent.innerHTML = `
+                <div style="text-align: center; padding: 2rem 0;">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--text-muted); margin-bottom: 1rem;">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">Unable to load content.</p>
+                    ${isLocal ? `<p style="font-size: 0.85rem; color: var(--text-muted);">Local file fetching is blocked by your browser. Please run the site via a local server (e.g. VS Code Live Server).</p>` : ''}
+                </div>
+            `;
         }
 
         footerModalOverlay.classList.add('active');
