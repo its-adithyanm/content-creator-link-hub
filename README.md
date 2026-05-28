@@ -1,192 +1,274 @@
 # Content Creator Link Hub
 
-A searchable link directory website for content creators. Solves the problem of sharing multiple links when you only have space for one in your bio.
+A premium searchable link hub built for modern content creators.
+Designed to solve the “one bio link” problem while giving followers a smooth and interactive experience.
 
-## The Problem
+---
 
-As a content creator with 276K followers, I faced these issues:
-- Instagram bio only allows one link
-- Cannot manually send links to everyone
-- Followers struggle to find specific content
-- Existing tools lack proper search functionality
+# NEW UPDATES & FEATURES
 
-So this project was created to fix that.
+The project has been significantly upgraded with premium UI interactions, smarter link handling, AI prompt support, animated verification flows, and built-in support tools.
 
-## What It Does
+## What's New
 
-A simple website where followers can search for any link they need. You update one config file, they search, and get the link instantly.
+### AI Prompt Link System
+
+Links can now optionally contain AI prompts instead of direct downloads.
+
+New optional field in `data.js`:
+
+```js
+promptText: "Your AI prompt here..."
+```
+
+How it works:
+
+* If a link contains `promptText`, clicking “Already Following” opens a premium prompt modal.
+* Users can:
+
+  * View the full AI prompt
+  * Scroll through long prompts
+  * Copy prompts instantly
+  * Close the modal smoothly
+* Existing redirect links still work normally.
+* Links without `promptText` continue using the original redirect system.
+
+This allows the website to work as:
+
+* Resource hub
+* AI prompt library
+* Creator toolkit
+* Download center
+
+without changing the core structure.
+
+---
+
+## Premium Follow Verification Flow
+
+The old instant redirect system has been upgraded.
+
+### New Flow
+
+When users click:
+
+```text
+Already Following
+```
+
+they now see:
+
+* Animated verification modal
+* Circular loading spinner
+* “Verifying you are following...” message
+* 3-second premium verification animation
+* Animated success tick mark
+* Automatic redirect after verification
+
+This creates a much smoother and more premium user experience.
+
+### Important
+
+This is a simulated verification flow.
+No Instagram API or third-party verification service is used.
+
+---
+
+## Built-In Support Form System
+
+A fully custom support request modal has been added.
+
+### Features
+
+* Floating support button
+* Premium popup modal
+* Name field
+* Email field
+* Problem/message textarea
+* Real-time validation
+* Loading animation
+* Success state with animated tick
+* Error state with retry button
+* Mobile responsive design
+
+### Google Forms Integration
+
+Submissions are automatically sent directly into Google Forms using hidden form entry mapping.
+
+No backend or database required.
+
+---
+
+## Legal Pages System
+
+The project now includes fully integrated legal pages:
+
+* Privacy Policy
+* Disclaimer
+* Copyright
+
+### Improvements
+
+* Proper modal/page loading
+* Static HTML fallback support
+* Better local file handling
+* Mobile responsive formatting
+* Premium dark styling
+
+---
+
+# Updated Features List
 
 ## Features
 
-- Real-time search with keyword matching
-- Highlighted search results in titles and descriptions
-- Custom thumbnail image for each link
-- Social media profile links
-- Customizable dark theme
-- Mobile-friendly layout
-- Footer pages for copyright, privacy, and disclaimer
-- No database, no backend, just static files
+* Real-time search with keyword matching
+* Highlighted search results
+* AI prompt modal system
+* Premium follow verification flow
+* Custom thumbnails for every link
+* Google Forms powered support system
+* Floating support action button
+* Smooth modal animations
+* Animated success/error states
+* Social media profile links
+* Responsive dark theme
+* Footer legal pages
+* Fuzzy search support
+* Static hosting friendly
+* No backend required
 
-## How to Use
+---
 
-### 1. Set Up Your Profile
+# Updated Link Structure
 
-Open `data.js` and edit these fields:
+Each link inside `data.js` now supports:
 
-siteTitle: "Your Name",
-profileUrl: "https://www.instagram.com/yourhandle",
-profilePhotoUrl: "Assets/Profile photo/profile.jpg",
-
-text
-
-Update your social media links:
-
-socialMedia: {
-instagram: "https://www.instagram.com/yourhandle",
-youtube: "https://www.youtube.com/@yourchannel",
-telegram: "https://t.me/yourhandle"
-}
-
-text
-
-### 2. Add Your Links
-
-In `data.js`, each link is an object inside the `links` array:
-
+```js
 {
-id: "premiere-pro",
-title: "Premiere Pro",
-description: "Professional video editing software",
-keywords: ["premiere", "video editor", "adobe", "editing"],
-thumbnail: "Assets/Links thumbnail/premiere.webp",
-buttonText: "Download",
-ctaText: "Follow @your_handle to download",
-followRedirectUrl: "https://example.com/premiere",
-priority: 1,
-visible: true
+  id: "chatgpt-prompt",
+  title: "ChatGPT Prompt Pack",
+  description: "Advanced AI prompts for creators",
+  keywords: ["chatgpt", "ai", "prompt"],
+  thumbnail: "Assets/Links thumbnail/prompt.webp",
+
+  buttonText: "Get Prompt",
+
+  ctaText: "Follow @snap_blitz to continue",
+
+  followRedirectUrl: "https://example.com",
+
+  promptText: `
+    Write a cinematic YouTube intro
+    with dark neon aesthetics...
+  `,
+
+  priority: 1,
+  visible: true
 }
+```
 
-text
+## New Optional Field
 
-- `id`: unique id (no spaces)
-- `title`: name of the link
-- `description`: short description
-- `keywords`: words users might search for
-- `thumbnail`: path to thumbnail image
-- `buttonText`: text on the button
-- `ctaText`: message shown in the modal
-- `followRedirectUrl`: where the button redirects
-- `priority`: lower number = shown higher
-- `visible`: set to `false` to hide a link
+| Field        | Description                                   |
+| ------------ | --------------------------------------------- |
+| `promptText` | Opens prompt modal instead of direct redirect |
 
-### 3. Add Images
+If `promptText` is missing:
 
-Place your images in these folders:
+* Original redirect behavior remains unchanged.
 
-- Profile photo  
-  - Path: `Assets/Profile photo/profile.jpg`  
-  - Size: 400x400 px  
-  - Format: JPG or PNG  
+---
 
-- Link thumbnails  
-  - Path: `Assets/Links thumbnail/`  
-  - Size: 256x256 px  
-  - Format: PNG for icons, JPG for photos  
+# Performance & Scalability
 
-Update the `thumbnail` field in each link object to match your filenames.
+The website is optimized for large link collections.
 
-### 4. Customize Theme
+### Supported
 
-Change basic colors in `data.js`:
+* Hundreds of links
+* Large keyword lists
+* Fast search filtering
+* Real-time rendering
 
-theme: {
-backgroundPrimary: "#000000",
-accentPrimary: "#8b5cf6",
-accentSecondary: "#7c3aed"
-}
+### Optimizations
 
-text
+* Debounced search
+* Lazy rendering logic
+* Efficient filtering
+* Lightweight vanilla JS architecture
 
-These values control the background and accent colors used in the UI.
+The project can scale to large resource libraries without requiring a backend.
 
-### 5. Deploy
+---
 
-This is a static site, so you can host it anywhere:
+# Tech Stack
 
-- GitHub Pages
-- Netlify
-- Vercel
-- Any static web hosting
+* HTML
+* CSS
+* Vanilla JavaScript
+* Client-side fuzzy search
+* Google Forms integration
+* Static hosting architecture
 
-Upload all project files, then share the main URL in your bio.
+No frameworks or build tools required.
 
-content-creator-link-hub/
-│
-├── index.html              # Main page
-├── styles.css              # All styling
-├── app.js                  # Search and UI logic
-├── data.js                 # Edit this - your links and config
-│
-├── Assets/
-│   ├── Profile photo/
-│   │   └── profile.jpg     # 400x400px - your profile picture
-│   │
-│   └── Links thumbnail/
-│       ├── premiere.webp   # 256x256px - link thumbnails
-│       ├── aftereffects.webp
-│       ├── capcut.webp
-│       ├── gaming.webp
-│       ├── automation.webp
-│       └── resources.webp
-│
-├── copyright.html          # Copyright page
-├── privacy.html            # Privacy policy page
-└── disclaimer.html         # Disclaimer page
+---
 
+# Perfect For
 
-text
+* Instagram creators
+* AI prompt sellers
+* Digital product creators
+* YouTube creators
+* Tool curators
+* Resource directories
+* Gaming creators
+* Educational creators
+* Automation creators
 
-## How It Works
+---
 
-- `data.js` holds profile data, theme, social links, and all link items.
-- `index.html` loads `data.js` and `app.js`.
-- `app.js` reads `window.SITE_DATA`, builds the cards, and wires up search, modals, and footer pages.
-- `styles.css` controls the dark UI, responsive layout, and animations.
+# Why This Project Exists
 
-## Search Behaviour
+Most “link in bio” tools are:
 
-- Searches inside `title`, `description`, and `keywords`.
-- Matches are highlighted in the text.
-- Works as you type, with a small delay to keep it smooth.
-- Can handle small typos thanks to fuzzy matching.
+* cluttered,
+* slow,
+* limited,
+* or lack search functionality.
 
-## Customization Options
+This project was built to create a:
 
-You can easily tweak:
+* searchable,
+* scalable,
+* creator-focused,
+* premium-feeling link hub
 
-- Colors (via `theme` in `data.js`)
-- Number of results (via `maxResults` in `data.js`)
-- Button texts and CTA messages
-- Social icons shown in the header
-- Legal pages content (`copyright.html`, `privacy.html`, `disclaimer.html`)
+that works entirely with static hosting.
 
-## Tech Stack
+---
 
-- HTML
-- CSS
-- Vanilla JavaScript
-- Client-side search (Fuse-style fuzzy search)
-- No build tools or frameworks required
+# Hosting
 
-## For Content Creators
+Can be deployed easily on:
 
-Designed for:
+* GitHub Pages
+* Netlify
+* Vercel
+* Cloudflare Pages
+* Any static host
 
-- Instagram and Reels creators
-- YouTube and Shorts creators
-- Tech and gaming creators
-- Anyone who shares tools, apps, or resources with followers
+No server required.
 
-## License
+---
 
-You are free to use, modify, and adapt this project for your own link hub.
+# License
+
+You are free to:
+
+* use,
+* modify,
+* customize,
+* and adapt
+
+this project for personal or commercial creator use.
