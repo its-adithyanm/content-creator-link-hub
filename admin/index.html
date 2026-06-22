@@ -135,6 +135,7 @@
                         <option value="all">All Types</option>
                         <option value="normal">Normal Links</option>
                         <option value="prompt">Prompt Links</option>
+                        <option value="embed">Tutorial Embed Links</option>
                     </select>
                 </div>
 
@@ -194,6 +195,7 @@
                             <select id="link_type">
                                 <option value="normal">Normal Link</option>
                                 <option value="prompt">AI Prompt Link</option>
+                                <option value="embed">Tutorial Embed Link</option>
                             </select>
                         </div>
                         <div class="form-group half align-bottom">
@@ -221,6 +223,24 @@
                             <label for="link_prompt_redirect">Optional Redirect URL (Fallback)</label>
                             <input type="url" id="link_prompt_redirect" placeholder="https://...">
                         </div>
+                    </div>
+
+                    <div id="embed-link-fields" class="type-fields hidden">
+                        <div class="form-group">
+                            <label for="link_embedTitle">Modal Heading Text *</label>
+                            <input type="text" id="link_embedTitle" placeholder="e.g. Watch this tutorial">
+                        </div>
+                        <div class="form-group">
+                            <label for="link_youtubeEmbedUrl">YouTube URL or Embed Code *</label>
+                            <input type="url" id="link_youtubeEmbedUrl" placeholder="https://youtu.be/...">
+                        </div>
+                        <fieldset class="form-fieldset">
+                            <legend>Action Buttons</legend>
+                            <div id="action-buttons-container" style="display:flex; flex-direction:column; gap:10px;">
+                                <!-- Dynamic rows added via JS -->
+                            </div>
+                            <button type="button" id="add-action-btn-btn" class="secondary-btn" style="margin-top: 10px;">+ Add Button</button>
+                        </fieldset>
                     </div>
 
                     <div class="form-row">

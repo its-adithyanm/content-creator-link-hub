@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="SnapBlitz - Your hub for premium resources and tools">
     <meta name="author" content="SnapBlitz">
     <title>SnapBlitz Links</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@700;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -73,6 +75,12 @@
                     </svg>
                 </button>
             </div>
+        </div>
+
+        <!-- Latest Links Section -->
+        <div class="latest-container" id="latestContainer" style="display: none;">
+            <h2 class="latest-header">• Latest Resources •</h2>
+            <div class="results-grid" id="latestGrid"></div>
         </div>
 
         <!-- Results Section -->
@@ -204,6 +212,27 @@
                         </svg>
                         <span id="promptModalCopyText">Copy Prompt</span>
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Embed Modal -->
+    <div class="modal-overlay" id="embedModalOverlay">
+        <div class="modal" role="dialog" aria-modal="true">
+            <button class="modal-close" id="embedModalClose" aria-label="Close">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <div class="modal-content">
+                <h2 id="embedModalTitle" class="modal-title"></h2>
+                <div class="video-container">
+                    <iframe id="embedModalIframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <div class="embed-actions modal-actions" id="embedModalActions">
+                    <!-- Dynamic action buttons injected here -->
                 </div>
             </div>
         </div>

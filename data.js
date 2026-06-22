@@ -123,6 +123,7 @@ window.SITE_DATA = {
         },
         {
             "id": "viral-reels-prompt",
+            "type": "prompt",
             "title": "Viral Reel Prompt",
             "description": "AI prompt for viral Instagram reels",
             "keywords": [
@@ -130,13 +131,12 @@ window.SITE_DATA = {
                 "prompt",
                 "instagram"
             ],
-            "thumbnail": "Assets/Links thumbnail/ChatGPT prompt Adithyan M.webp",
+            "thumbnail": "Assets/Links thumbnail/prompt.webp",
             "buttonText": "Get Prompt",
             "ctaText": "Follow @snap_blitz to unlock this AI prompt",
-            "visible": true,
-            "type": "prompt",
             "promptText": "Act as an expert social media strategist and content creator specializing in Instagram Reels. Your task is to generate 10 highly engaging and viral reel concepts tailored for a tech content creator.\n\nFirst, analyze the current trending audio tracks and formats within the tech niche (e.g., fast-paced unboxings, 'day in the life' vlogs, hidden features tutorials). For each concept, provide a catchy hook for the first 3 seconds to maximize viewer retention.\n\nNext, write a detailed script or shot list for each idea. Specify the exact camera angles (e.g., top-down for desk setups, close-up for product textures) and lighting suggestions (e.g., neon cyberpunk lighting, clean minimal daylight).\n\nThen, outline the caption for each reel. Include SEO-optimized keywords seamlessly integrated into the text, along with a strong Call-To-Action (CTA) encouraging viewers to save the video or comment a specific keyword for an auto-DM link.\n\nFinally, suggest a list of 5-7 targeted hashtags for each concept that balance broad reach with niche engagement, ensuring the content is pushed to the explore page of tech enthusiasts and gadget lovers.",
-            "priority": 7
+            "priority": 7,
+            "visible": true
         },
         {
             "id": "67Movie website",
@@ -154,6 +154,28 @@ window.SITE_DATA = {
             "followRedirectUrl": "https://67movies.net",
             "priority": 8,
             "visible": true
+        },
+        {
+            "id": "zzzzzzz",
+            "title": "zzzzzzz",
+            "description": "zzzzzzzz",
+            "keywords": [
+                "zzzzz"
+            ],
+            "thumbnail": "",
+            "buttonText": "",
+            "ctaText": "",
+            "visible": true,
+            "type": "embed",
+            "embedTitle": "zzzzzzzz",
+            "youtubeEmbedUrl": "https://www.youtube.com/watch?v=eHTXQW58WhA",
+            "actionButtons": [
+                {
+                    "text": "zzz",
+                    "url": "https://www.youtube.com/watch?v=eHTXQW58WhA"
+                }
+            ],
+            "priority": 9
         }
     ]
 };

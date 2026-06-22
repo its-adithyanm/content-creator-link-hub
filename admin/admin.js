@@ -177,8 +177,9 @@ function renderLinks() {
         if (q && !link.title.toLowerCase().includes(q) && !(link.description||'').toLowerCase().includes(q) && link.id.toLowerCase() !== q) return;
         if (visFilter === 'visible' && !link.visible) return;
         if (visFilter === 'hidden' && link.visible) return;
-        if (typeFilter === 'normal' && link.type === 'prompt') return;
+        if (typeFilter === 'normal' && (link.type === 'prompt' || link.type === 'embed')) return;
         if (typeFilter === 'prompt' && link.type !== 'prompt') return;
+        if (typeFilter === 'embed' && link.type !== 'embed') return;
 
         const li = document.createElement('li');
         li.className = `link-item ${link.visible ? '' : 'hidden-item'}`;
@@ -193,7 +194,9 @@ function renderLinks() {
         li.addEventListener('dragend', handleDragEnd);
 
         const thumbSrc = link.thumbnail ? link.thumbnail : 'placeholder.png';
-        const typeBadge = link.type === 'prompt' ? '<span class="badge prompt">Prompt</span>' : '<span class="badge normal">Normal</span>';
+        let typeBadge = '<span class="badge normal">Normal</span>';
+        if (link.type === 'prompt') typeBadge = '<span class="badge prompt">Prompt</span>';
+        else if (link.type === 'embed') typeBadge = '<span class="badge embed">Embed</span>';
 
         li.innerHTML = `
             <div class="col-drag" title="Drag to reorder">☰</div>
@@ -277,13 +280,21 @@ function setupEventListeners() {
 
     // Toggle Type fields
     document.getElementById('link_type').addEventListener('change', (e) => {
+        document.getElementById('prompt-link-fields').classList.add('hidden');
+        document.getElementById('normal-link-fields').classList.add('hidden');
+        document.getElementById('embed-link-fields').classList.add('hidden');
+        
         if (e.target.value === 'prompt') {
             document.getElementById('prompt-link-fields').classList.remove('hidden');
-            document.getElementById('normal-link-fields').classList.add('hidden');
+        } else if (e.target.value === 'embed') {
+            document.getElementById('embed-link-fields').classList.remove('hidden');
         } else {
-            document.getElementById('prompt-link-fields').classList.add('hidden');
             document.getElementById('normal-link-fields').classList.remove('hidden');
         }
+    });
+
+    document.getElementById('add-action-btn-btn').addEventListener('click', () => {
+        addActionBtnRow();
     });
 
     // Auto-generate ID from Title
@@ -337,6 +348,19 @@ function setupEventListeners() {
     document.getElementById('force-export-btn').addEventListener('click', () => doSave(true));
 }
 
+function addActionBtnRow(text = '', url = '') {
+    const container = document.getElementById('action-buttons-container');
+    const row = document.createElement('div');
+    row.className = 'action-btn-row';
+    row.innerHTML = `
+        <input type="text" placeholder="Button Text" class="btn-text" value="\${text}">
+        <input type="url" placeholder="Button URL" class="btn-url" value="\${url}">
+        <button type="button" class="remove-btn" title="Remove">&times;</button>
+    `;
+    row.querySelector('.remove-btn').addEventListener('click', () => row.remove());
+    container.appendChild(row);
+}
+
 function openLinkEditor(linkId) {
     currentEditingLinkId = linkId;
     const modal = els.linkModal;
@@ -360,15 +384,25 @@ function openLinkEditor(linkId) {
         document.getElementById('link_description').value = link.description || '';
         document.getElementById('link_keywords').value = Array.isArray(link.keywords) ? link.keywords.join(', ') : '';
         
-        document.getElementById('link_type').value = link.type === 'prompt' ? 'prompt' : 'normal';
+        document.getElementById('link_type').value = link.type === 'prompt' ? 'prompt' : (link.type === 'embed' ? 'embed' : 'normal');
         document.getElementById('link_visible').checked = link.visible !== false;
 
         document.getElementById('link_buttonText').value = link.buttonText || '';
         document.getElementById('link_ctaText').value = link.ctaText || '';
         
+        document.getElementById('action-buttons-container').innerHTML = '';
+
         if (link.type === 'prompt') {
             document.getElementById('link_promptText').value = link.promptText || '';
             document.getElementById('link_prompt_redirect').value = link.followRedirectUrl || '';
+        } else if (link.type === 'embed') {
+            document.getElementById('link_embedTitle').value = link.embedTitle || '';
+            document.getElementById('link_youtubeEmbedUrl').value = link.youtubeEmbedUrl || '';
+            if (link.actionButtons && link.actionButtons.length > 0) {
+                link.actionButtons.forEach(btn => addActionBtnRow(btn.text, btn.url));
+            } else {
+                addActionBtnRow();
+            }
         } else {
             document.getElementById('link_followRedirectUrl').value = link.followRedirectUrl || '';
         }
@@ -376,6 +410,9 @@ function openLinkEditor(linkId) {
         if (link.thumbnail) {
             document.getElementById('link_thumbnail_path').value = link.thumbnail;
             document.getElementById('link-thumb-preview').src = link.thumbnail;
+        } else {
+            document.getElementById('link_thumbnail_path').value = '';
+            document.getElementById('link-thumb-preview').src = 'placeholder.png';
         }
     } else {
         // Add mode
@@ -383,6 +420,10 @@ function openLinkEditor(linkId) {
         document.getElementById('link-original-id').value = '';
         document.getElementById('link_type').value = 'normal';
         document.getElementById('link_visible').checked = true;
+        document.getElementById('action-buttons-container').innerHTML = '';
+        addActionBtnRow();
+        document.getElementById('link_thumbnail_path').value = '';
+        document.getElementById('link-thumb-preview').src = 'placeholder.png';
     }
     
     // Trigger change to set fields visibility
@@ -428,6 +469,26 @@ function saveLink() {
         newLink.promptText = document.getElementById('link_promptText').value.trim();
         const redir = document.getElementById('link_prompt_redirect').value.trim();
         if (redir) newLink.followRedirectUrl = redir;
+    } else if (type === 'embed') {
+        newLink.type = 'embed';
+        newLink.embedTitle = document.getElementById('link_embedTitle').value.trim();
+        
+        let rawUrl = document.getElementById('link_youtubeEmbedUrl').value.trim();
+        if (rawUrl.toLowerCase().startsWith('<iframe')) {
+            const srcMatch = rawUrl.match(/src=["'](.*?)["']/);
+            if (srcMatch && srcMatch[1]) {
+                rawUrl = srcMatch[1];
+            }
+        }
+        newLink.youtubeEmbedUrl = rawUrl;
+
+        const actionBtns = [];
+        document.querySelectorAll('#action-buttons-container .action-btn-row').forEach(row => {
+            const text = row.querySelector('.btn-text').value.trim();
+            const url = row.querySelector('.btn-url').value.trim();
+            if (text || url) actionBtns.push({ text, url });
+        });
+        newLink.actionButtons = actionBtns;
     } else {
         newLink.followRedirectUrl = document.getElementById('link_followRedirectUrl').value.trim();
     }
@@ -515,6 +576,9 @@ function validateExport() {
         
         if (l.type === 'prompt') {
             if (!l.promptText) errors.push(`Prompt Link ${l.id} is missing Prompt Text.`);
+        } else if (l.type === 'embed') {
+            if (!l.embedTitle) errors.push(`Embed Link ${l.id} is missing Modal Heading.`);
+            if (!l.youtubeEmbedUrl) errors.push(`Embed Link ${l.id} is missing YouTube URL.`);
         } else {
             if (!l.followRedirectUrl) errors.push(`Normal Link ${l.id} is missing Redirect URL.`);
         }

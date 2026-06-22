@@ -1,367 +1,192 @@
-\# SnapBlitz Link Hub
+# Content Creator Link Hub
 
-A modern searchable link hub built for content creators who need to share hundreds of resources using a single bio link.
+A searchable link directory website for content creators. Solves the problem of sharing multiple links when you only have space for one in your bio.
 
-This project was originally created to solve a real problem faced while managing a large Instagram audience and handling thousands of repeated link requests manually.
+## The Problem
 
----
+As a content creator with 276K followers, I faced these issues:
+- Instagram bio only allows one link
+- Cannot manually send links to everyone
+- Followers struggle to find specific content
+- Existing tools lack proper search functionality
 
-# Why This Project Exists
+So this project was created to fix that.
 
-As a content creator with 276K+ followers, I faced several problems:
+## What It Does
 
-* Instagram bio only allows one link
-* Followers constantly ask for the same links repeatedly
-* Manual DM replies take too much time
-* Existing link-in-bio tools lack proper search functionality
-* Instagram automation tools can become unreliable or restricted
+A simple website where followers can search for any link they need. You update one config file, they search, and get the link instantly.
 
-So instead of depending completely on automation systems, I built my own searchable link directory system.
+## Features
 
-Followers can simply search for what they need and instantly access the correct link.
+- Real-time search with keyword matching
+- Highlighted search results in titles and descriptions
+- Custom thumbnail image for each link
+- Social media profile links
+- Customizable dark theme
+- Mobile-friendly layout
+- Footer pages for copyright, privacy, and disclaimer
+- No database, no backend, just static files
 
----
+## How to Use
 
-# Important Note
+### 1. Set Up Your Profile
 
-This project was made almost entirely using AI coding tools and no-code / low-code workflows.
+Open `data.js` and edit these fields:
 
-I am not a professional developer and still learning programming.
-There may be bugs, inefficient code, or mistakes inside the project.
+siteTitle: "Your Name",
+profileUrl: "https://www.instagram.com/yourhandle",
+profilePhotoUrl: "Assets/Profile photo/profile.jpg",
 
-The main goal of this project was solving a real-world creator problem in the simplest possible way.
+text
 
-If anyone wants to improve the project, fix bugs, optimize performance, or add features, contributions are always welcome.
+Update your social media links:
 
----
+socialMedia: {
+instagram: "https://www.instagram.com/yourhandle",
+youtube: "https://www.youtube.com/@yourchannel",
+telegram: "https://t.me/yourhandle"
+}
 
-# What This Website Does
+text
 
-SnapBlitz Link Hub allows creators to:
+### 2. Add Your Links
 
-* Share unlimited links using one bio URL
-* Let followers search resources instantly
-* Organize tools, apps, games, prompts, downloads, and websites
-* Share AI prompts directly inside the website
-* Add follow-to-unlock style interactions
-* Manage everything from a local admin panel
+In `data.js`, each link is an object inside the `links` array:
 
----
+{
+id: "premiere-pro",
+title: "Premiere Pro",
+description: "Professional video editing software",
+keywords: ["premiere", "video editor", "adobe", "editing"],
+thumbnail: "Assets/Links thumbnail/premiere.webp",
+buttonText: "Download",
+ctaText: "Follow @your_handle to download",
+followRedirectUrl: "https://example.com/premiere",
+priority: 1,
+visible: true
+}
 
-# Core Features
+text
 
-## Search System
+- `id`: unique id (no spaces)
+- `title`: name of the link
+- `description`: short description
+- `keywords`: words users might search for
+- `thumbnail`: path to thumbnail image
+- `buttonText`: text on the button
+- `ctaText`: message shown in the modal
+- `followRedirectUrl`: where the button redirects
+- `priority`: lower number = shown higher
+- `visible`: set to `false` to hide a link
 
-* Real-time search with keyword matching
-* Fuzzy search support for small typos
-* Highlighted matching text
-* Fast filtering and sorting
-* Priority-based ranking system
+### 3. Add Images
 
----
+Place your images in these folders:
 
-## Link System
+- Profile photo  
+  - Path: `Assets/Profile photo/profile.jpg`  
+  - Size: 400x400 px  
+  - Format: JPG or PNG  
 
-Each card can contain:
+- Link thumbnails  
+  - Path: `Assets/Links thumbnail/`  
+  - Size: 256x256 px  
+  - Format: PNG for icons, JPG for photos  
 
-* Title
-* Description
-* Keywords
-* Thumbnail
-* Redirect URL
-* CTA text
-* Custom button text
-* Visibility controls
-* Priority sorting
+Update the `thumbnail` field in each link object to match your filenames.
 
----
+### 4. Customize Theme
 
-## AI Prompt Support
+Change basic colors in `data.js`:
 
-Special prompt-type links are supported.
+theme: {
+backgroundPrimary: "#000000",
+accentPrimary: "#8b5cf6",
+accentSecondary: "#7c3aed"
+}
 
-Instead of redirecting users to a URL:
+text
 
-* A modal opens
-* The AI prompt is displayed
-* Users can copy prompts instantly
+These values control the background and accent colors used in the UI.
 
-Useful for:
+### 5. Deploy
 
-* ChatGPT prompts
-* Instagram reel prompts
-* Editing prompts
-* Automation prompts
-* AI workflow sharing
+This is a static site, so you can host it anywhere:
 
----
+- GitHub Pages
+- Netlify
+- Vercel
+- Any static web hosting
 
-## Follow-to-Unlock Modal
+Upload all project files, then share the main URL in your bio.
 
-Custom follow verification flow included:
-
-* User clicks link
-* Follow popup appears
-* "Already Following" button triggers:
-
-  * fake verification loader
-  * animated spinner
-  * success tick animation
-  * delayed redirect system
-
-This was intentionally designed as a lightweight frontend-only engagement system without requiring expensive social APIs.
-
----
-
-## Local Admin Panel (NEW)
-
-The project now includes a fully separate local admin panel system.
-
-## Admin Features
-
-### General Settings Editor
-
-Edit:
-
-* Site title
-* Profile URL
-* Profile photo
-* Theme colors
-* Social media links
-* Default button text
-* Max search results
-
----
-
-### Link Management System
-
-Add/Edit/Delete:
-
-* Standard links
-* AI prompt links
-* Redirect links
-* Keywords
-* CTA texts
-* Button labels
-* Priorities
-* Visibility status
-
----
-
-### Thumbnail Upload Support
-
-Upload:
-
-* Link thumbnails
-* Profile photos
-
-The admin panel automatically:
-
-* Detects filenames
-* Updates `data.js`
-* Generates correct asset paths
-
----
-
-### Local-Only Workflow
-
-The admin panel works completely offline.
-
-No:
-
-* database
-* backend server
-* hosting API
-* authentication system
-* cloud CMS
-
-Everything works using:
-
-* HTML
-* CSS
-* Vanilla JavaScript
-
----
-
-# Project Structure
-
-```text
 content-creator-link-hub/
 │
-├── index.html
-├── styles.css
-├── app.js
-├── data.js
-│
-├── admin/
-│   ├── index.html
-│   ├── admin.css
-│   ├── admin.js
-│   ├── data.js
-│   │
-│   └── Assets/
-│       ├── Profile photo/
-│       └── Links thumbnail/
+├── index.html              # Main page
+├── styles.css              # All styling
+├── app.js                  # Search and UI logic
+├── data.js                 # Edit this - your links and config
 │
 ├── Assets/
 │   ├── Profile photo/
+│   │   └── profile.jpg     # 400x400px - your profile picture
+│   │
 │   └── Links thumbnail/
+│       ├── premiere.webp   # 256x256px - link thumbnails
+│       ├── aftereffects.webp
+│       ├── capcut.webp
+│       ├── gaming.webp
+│       ├── automation.webp
+│       └── resources.webp
 │
-├── copyright.html
-├── privacy.html
-└── disclaimer.html
-```
+├── copyright.html          # Copyright page
+├── privacy.html            # Privacy policy page
+└── disclaimer.html         # Disclaimer page
 
----
 
-# How The Admin Panel Works
+text
 
-The frontend website remains completely untouched.
+## How It Works
 
-The admin panel acts like a local CMS/editor.
+- `data.js` holds profile data, theme, social links, and all link items.
+- `index.html` loads `data.js` and `app.js`.
+- `app.js` reads `window.SITE_DATA`, builds the cards, and wires up search, modals, and footer pages.
+- `styles.css` controls the dark UI, responsive layout, and animations.
 
-Workflow:
+## Search Behaviour
 
-1. Open:
+- Searches inside `title`, `description`, and `keywords`.
+- Matches are highlighted in the text.
+- Works as you type, with a small delay to keep it smooth.
+- Can handle small typos thanks to fuzzy matching.
 
-```text
-admin/index.html
-```
+## Customization Options
 
-2. Edit your links visually
+You can easily tweak:
 
-3. Upload thumbnails if needed
+- Colors (via `theme` in `data.js`)
+- Number of results (via `maxResults` in `data.js`)
+- Button texts and CTA messages
+- Social icons shown in the header
+- Legal pages content (`copyright.html`, `privacy.html`, `disclaimer.html`)
 
-4. Press SAVE
+## Tech Stack
 
-5. Replace:
+- HTML
+- CSS
+- Vanilla JavaScript
+- Client-side search (Fuse-style fuzzy search)
+- No build tools or frameworks required
 
-* frontend `data.js`
-* frontend `Assets/`
+## For Content Creators
 
-with updated admin versions
+Designed for:
 
-6. Push updated files to GitHub
+- Instagram and Reels creators
+- YouTube and Shorts creators
+- Tech and gaming creators
+- Anyone who shares tools, apps, or resources with followers
 
----
+## License
 
-# How The Website Works
-
-* `data.js` stores all content
-* `index.html` loads data and UI
-* `app.js` handles:
-
-  * search
-  * cards
-  * prompts
-  * modals
-  * redirects
-* `styles.css` handles:
-
-  * layout
-  * animations
-  * dark theme
-  * responsive design
-
----
-
-# Search Behaviour
-
-Search checks:
-
-* title
-* description
-* keywords
-
-Features:
-
-* real-time filtering
-* fuzzy matching
-* highlighted keywords
-* smooth debounce system
-
----
-
-# Performance Notes
-
-The system is designed to support large numbers of links.
-
-However:
-
-* extremely large datasets (500–1000+ links)
-* massive thumbnail libraries
-* unoptimized images
-
-may eventually affect browser performance because everything runs client-side.
-
-Future optimizations may include:
-
-* lazy loading
-* JSON chunk loading
-* pagination
-* indexed search
-* backend APIs
-
----
-
-# Tech Stack
-
-* HTML
-* CSS
-* Vanilla JavaScript
-* Client-side search system
-* No frameworks
-* No build tools
-* No database
-* No backend
-
----
-
-# Designed For
-
-* Instagram creators
-* YouTube creators
-* Reels creators
-* Shorts creators
-* Tech creators
-* Gaming creators
-* AI creators
-* Resource-sharing communities
-
----
-
-# Open Source & Contributions
-
-This project is fully open source.
-
-If you want to:
-
-* improve UI
-* optimize performance
-* fix bugs
-* improve search
-* add backend support
-* create plugins
-* improve mobile UX
-
-feel free to contribute.
-
-Since this project was built mainly with AI-assisted coding tools, there may be architectural mistakes or beginner-level implementations.
-
-All improvements are appreciated.
-
----
-
-# License
-
-You are free to:
-
-* use
-* modify
-* customize
-* fork
-* improve
-
-this project for personal or commercial use.
-
-Attribution is appreciated but not required.
+You are free to use, modify, and adapt this project for your own link hub.

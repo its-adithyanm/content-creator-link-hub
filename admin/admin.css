@@ -397,6 +397,27 @@ button {
 }
 .badge.normal { background-color: var(--bg-input); color: var(--text-muted); }
 .badge.prompt { background-color: rgba(139, 92, 246, 0.2); color: var(--accent); border: 1px solid rgba(139, 92, 246, 0.3); }
+.badge.embed { background-color: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
+
+.action-btn-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.action-btn-row input {
+    flex: 1;
+}
+.action-btn-row .remove-btn {
+    background: transparent;
+    color: var(--danger);
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0 5px;
+}
+.action-btn-row .remove-btn:hover {
+    color: #dc2626;
+}
 
 /* Modals */
 .modal-overlay {

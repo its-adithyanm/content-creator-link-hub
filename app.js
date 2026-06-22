@@ -8,6 +8,7 @@
     let fuse = null;
     let currentLinks = [];
     let currentRenderedResults = [];
+    let currentLatestResults = [];
     let searchDebounceTimer = null;
     const DEBOUNCE_DELAY = 150;
 
@@ -18,6 +19,8 @@
     const resultsGrid = document.getElementById('resultsGrid');
     const noResults = document.getElementById('noResults');
     const resultsContainer = document.getElementById('resultsContainer');
+    const latestContainer = document.getElementById('latestContainer');
+    const latestGrid = document.getElementById('latestGrid');
     const modalOverlay = document.getElementById('modalOverlay');
     const modalClose = document.getElementById('modalClose');
     const modalTitle = document.getElementById('modalTitle');
@@ -43,6 +46,11 @@
     const promptModalText = document.getElementById('promptModalText');
     const promptModalCopy = document.getElementById('promptModalCopy');
     const promptModalCopyText = document.getElementById('promptModalCopyText');
+    const embedModalOverlay = document.getElementById('embedModalOverlay');
+    const embedModalClose = document.getElementById('embedModalClose');
+    const embedModalTitle = document.getElementById('embedModalTitle');
+    const embedModalIframe = document.getElementById('embedModalIframe');
+    const embedModalActions = document.getElementById('embedModalActions');
     const supportModalOverlay = document.getElementById('supportModalOverlay');
     const supportModalClose = document.getElementById('supportModalClose');
     const supportForm = document.getElementById('supportForm');
@@ -70,6 +78,7 @@
 
         initializeFuse();
         setupEventListeners();
+        renderLatestLinks();
         hideResults();
     }
 
@@ -149,6 +158,10 @@
     function setupEventListeners() {
         resultsGrid.addEventListener('click', handleGridClick);
         resultsGrid.addEventListener('keydown', handleGridKeydown);
+        if (latestGrid) {
+            latestGrid.addEventListener('click', handleLatestGridClick);
+            latestGrid.addEventListener('keydown', handleLatestGridKeydown);
+        }
         searchInput.addEventListener('input', handleSearch);
         clearBtn.addEventListener('click', clearSearch);
         modalClose.addEventListener('click', closeModal);
@@ -157,6 +170,8 @@
         footerModalOverlay.addEventListener('click', handleFooterOverlayClick);
         if (promptModalClose) promptModalClose.addEventListener('click', closePromptModal);
         if (promptModalOverlay) promptModalOverlay.addEventListener('click', handlePromptOverlayClick);
+        if (embedModalClose) embedModalClose.addEventListener('click', closeEmbedModal);
+        if (embedModalOverlay) embedModalOverlay.addEventListener('click', handleEmbedOverlayClick);
         if (supportModalClose) supportModalClose.addEventListener('click', closeSupportModal);
         if (supportModalOverlay) supportModalOverlay.addEventListener('click', handleSupportOverlayClick);
         if (supportForm) supportForm.addEventListener('submit', handleSupportFormSubmit);
@@ -182,8 +197,11 @@
     function performSearch(query) {
         if (!query) {
             hideResults();
+            if (latestContainer) latestContainer.style.display = 'block';
             return;
         }
+
+        if (latestContainer) latestContainer.style.display = 'none';
 
         let results = [];
 
@@ -196,11 +214,10 @@
         } else {
             const lowerQuery = query.toLowerCase();
             results = currentLinks.filter(link => {
-                return (
-                    link.title.toLowerCase().includes(lowerQuery) ||
-                    link.description.toLowerCase().includes(lowerQuery) ||
-                    link.keywords.some(kw => kw.toLowerCase().includes(lowerQuery))
-                );
+                const titleMatch = link.title ? link.title.toLowerCase().includes(lowerQuery) : false;
+                const descMatch = link.description ? link.description.toLowerCase().includes(lowerQuery) : false;
+                const kwMatch = link.keywords && Array.isArray(link.keywords) ? link.keywords.some(kw => kw.toLowerCase().includes(lowerQuery)) : false;
+                return titleMatch || descMatch || kwMatch;
             });
         }
 
@@ -225,8 +242,12 @@
 
         const fragment = document.createDocumentFragment();
         results.forEach((item, index) => {
-            const card = createResultCard(item, query, index);
-            fragment.appendChild(card);
+            try {
+                const card = createResultCard(item, query, index);
+                if (card) fragment.appendChild(card);
+            } catch (err) {
+                console.error("Error rendering card:", item, err);
+            }
         });
         resultsGrid.appendChild(fragment);
     }
@@ -240,14 +261,14 @@
         card.setAttribute('tabindex', '0');
         card.dataset.index = index;
 
-        const highlightedTitle = highlightMatches(item.title, item.matches, 'title');
-        const highlightedDescription = highlightMatches(item.description, item.matches, 'description');
+        const highlightedTitle = highlightMatches(item.title || 'Untitled', item.matches, 'title');
+        const highlightedDescription = highlightMatches(item.description || '', item.matches, 'description');
         const buttonText = item.buttonText || window.SITE_DATA.defaultButtonText || 'Get Link';
 
         // NO KEYWORDS DISPLAYED
         card.innerHTML = `
             <div class="card-header">
-                ${item.thumbnail ? `<img src="${item.thumbnail}" alt="" class="card-thumbnail" loading="lazy">` : ''}
+                <img src="${item.thumbnail || ''}" alt="" class="card-thumbnail" loading="lazy">
                 <h3 class="card-title">${highlightedTitle}</h3>
             </div>
             <p class="card-description">${highlightedDescription}</p>
@@ -279,6 +300,53 @@
             e.preventDefault();
             const index = parseInt(card.dataset.index, 10);
             const item = currentRenderedResults[index];
+            if (item) openModal(item);
+        }
+    }
+
+    function renderLatestLinks() {
+        if (!latestGrid || !latestContainer) return;
+        latestGrid.innerHTML = '';
+        
+        currentLatestResults = window.SITE_DATA.links
+            .filter(link => link.visible !== false)
+            .reverse()
+            .slice(0, 6);
+
+        if (currentLatestResults.length === 0) {
+            latestContainer.style.display = 'none';
+            return;
+        }
+
+        latestContainer.style.display = 'block';
+
+        const fragment = document.createDocumentFragment();
+        currentLatestResults.forEach((item, index) => {
+            try {
+                const card = createResultCard(item, '', index);
+                if (card) fragment.appendChild(card);
+            } catch (err) {
+                console.error("Error rendering latest card:", item, err);
+            }
+        });
+        latestGrid.appendChild(fragment);
+    }
+
+    function handleLatestGridClick(e) {
+        const card = e.target.closest('.result-card');
+        if (!card) return;
+        const index = parseInt(card.dataset.index, 10);
+        const item = currentLatestResults[index];
+        if (item) openModal(item);
+    }
+
+    function handleLatestGridKeydown(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            const card = e.target.closest('.result-card');
+            if (!card) return;
+            e.preventDefault();
+            const index = parseInt(card.dataset.index, 10);
+            const item = currentLatestResults[index];
             if (item) openModal(item);
         }
     }
@@ -400,9 +468,9 @@
         showFollowState('loading');
 
         setTimeout(() => {
-            const redirectUrl = item.type === 'prompt' ? '#' : (item.followRedirectUrl || null);
+            const redirectUrl = (item.type === 'prompt' || item.type === 'embed') ? '#' : (item.followRedirectUrl || null);
 
-            if (!redirectUrl && item.type !== 'prompt') {
+            if (!redirectUrl && item.type !== 'prompt' && item.type !== 'embed') {
                 showFollowState('error');
                 isVerifyingFollow = false;
                 modalClose.style.pointerEvents = 'all';
@@ -420,6 +488,9 @@
                 if (item.type === 'prompt') {
                     closeModal();
                     openPromptModal(item);
+                } else if (item.type === 'embed') {
+                    closeModal();
+                    openEmbedModal(item);
                 } else {
                     window.location.href = redirectUrl;
                 }
@@ -450,6 +521,7 @@
             if (modalOverlay.classList.contains('active') && !isVerifyingFollow) closeModal();
             if (footerModalOverlay.classList.contains('active')) closeFooterModal();
             if (promptModalOverlay && promptModalOverlay.classList.contains('active')) closePromptModal();
+            if (embedModalOverlay && embedModalOverlay.classList.contains('active')) closeEmbedModal();
             if (supportModalOverlay && supportModalOverlay.classList.contains('active') && !isSubmittingSupport) closeSupportModal();
         }
     }
@@ -587,10 +659,73 @@
         if (e.target === promptModalOverlay) closePromptModal();
     }
 
+    function openEmbedModal(item) {
+        if (!embedModalOverlay) return;
+        
+        embedModalTitle.textContent = item.embedTitle || item.title || 'Tutorial';
+        embedModalIframe.src = formatYoutubeUrl(item.youtubeEmbedUrl);
+        
+        embedModalActions.innerHTML = '';
+        if (item.actionButtons && Array.isArray(item.actionButtons)) {
+            item.actionButtons.forEach(btnData => {
+                if (!btnData.text || !btnData.url) return;
+                const a = document.createElement('a');
+                a.className = 'btn btn-primary';
+                a.style.width = '100%';
+                a.href = btnData.url;
+                a.target = '_blank';
+                a.rel = 'noopener noreferrer';
+                a.textContent = btnData.text;
+                embedModalActions.appendChild(a);
+            });
+        }
+
+        embedModalOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function formatYoutubeUrl(url) {
+        if (!url) return '';
+        
+        let processedUrl = url.trim();
+        if (processedUrl.toLowerCase().startsWith('<iframe')) {
+            const srcMatch = processedUrl.match(/src=["'](.*?)["']/);
+            if (srcMatch && srcMatch[1]) {
+                processedUrl = srcMatch[1];
+            } else {
+                return '';
+            }
+        }
+
+        let videoId = '';
+        if (processedUrl.includes('youtu.be/')) {
+            videoId = processedUrl.split('youtu.be/')[1].split('?')[0];
+        } else if (processedUrl.includes('youtube.com/watch?v=')) {
+            videoId = processedUrl.split('v=')[1].split('&')[0];
+        } else if (processedUrl.includes('youtube.com/embed/')) {
+            return processedUrl;
+        }
+        return videoId ? `https://www.youtube.com/embed/${videoId}` : processedUrl;
+    }
+
+    function closeEmbedModal() {
+        if (!embedModalOverlay) return;
+        embedModalOverlay.classList.remove('active');
+        embedModalIframe.src = '';
+        if (!modalOverlay.classList.contains('active') && !footerModalOverlay.classList.contains('active') && !promptModalOverlay.classList.contains('active')) {
+            document.body.style.overflow = '';
+        }
+    }
+
+    function handleEmbedOverlayClick(e) {
+        if (e.target === embedModalOverlay) closeEmbedModal();
+    }
+
     function clearSearch() {
         searchInput.value = '';
         clearBtn.classList.remove('visible');
         hideResults();
+        if (latestContainer) latestContainer.style.display = 'block';
         searchInput.focus();
     }
 
