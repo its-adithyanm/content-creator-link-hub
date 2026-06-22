@@ -62,7 +62,6 @@
     const supportErrorCloseBtn = document.getElementById('supportErrorCloseBtn');
     const supportRetryBtn = document.getElementById('supportRetryBtn');
     const siteTitle = document.getElementById('siteTitle');
-    const profilePhoto = document.getElementById('profilePhoto');
     const socialIcons = document.getElementById('socialIcons');
 
     function init() {
@@ -83,18 +82,11 @@
     }
 
     function applySiteConfig() {
-        const { siteTitle: title, theme, profilePhotoUrl, socialMedia } = window.SITE_DATA;
+        const { siteTitle: title, theme, socialMedia } = window.SITE_DATA;
 
         if (title) {
             siteTitle.textContent = title;
             document.title = title;
-        }
-
-        if (profilePhotoUrl) {
-            profilePhoto.src = profilePhotoUrl;
-            profilePhoto.style.display = 'block';
-        } else {
-            profilePhoto.style.display = 'none';
         }
 
         if (socialMedia) {

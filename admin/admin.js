@@ -92,9 +92,6 @@ function populateGeneralSettings() {
     form.elements['defaultButtonText'].value = siteData.defaultButtonText || '';
     form.elements['maxResults'].value = siteData.maxResults || 50;
     
-    form.elements['profilePhotoUrl'].value = siteData.profilePhotoUrl || 'Assets/Profile photo/profile.jpg';
-    document.getElementById('profile-preview').src = siteData.profilePhotoUrl ? siteData.profilePhotoUrl : 'placeholder.png';
-
     if (siteData.socialMedia) {
         form.elements['social.instagram'].value = siteData.socialMedia.instagram || '';
         form.elements['social.facebook'].value = siteData.socialMedia.facebook || '';
@@ -137,28 +134,6 @@ function setupGeneralSettingsListeners() {
         saveToLocal();
     });
 
-    // Profile photo upload
-    document.getElementById('profilePhotoUpload').addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const relativePath = `Assets/Profile photo/${file.name}`;
-            siteData.profilePhotoUrl = relativePath;
-            els.generalForm.elements['profilePhotoUrl'].value = relativePath;
-            
-            const fnDisplay = document.getElementById('profile-filename-display');
-            if (fnDisplay) {
-                fnDisplay.style.display = 'block';
-                fnDisplay.querySelector('span').textContent = file.name;
-            }
-
-            // Show preview
-            const reader = new FileReader();
-            reader.onload = (e) => { document.getElementById('profile-preview').src = e.target.result; };
-            reader.readAsDataURL(file);
-            
-            saveToLocal();
-        }
-    });
 }
 
 // Links Rendering

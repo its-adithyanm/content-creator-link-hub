@@ -5,7 +5,6 @@ window.SITE_DATA = {
     "profileUrl": "https://www.instagram.com/snap_blitz",
     "defaultButtonText": "Get Link",
     "maxResults": 50,
-    "profilePhotoUrl": "Assets/Profile photo/profile.jpg",
     "socialMedia": {
         "instagram": "https://www.instagram.com/snap_blitz",
         "facebook": "https://www.facebook.com/snapblitz",

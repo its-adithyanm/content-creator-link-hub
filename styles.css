@@ -58,24 +58,6 @@ body {
     width: 100%;
 }
 
-/* Profile Photo - CENTERED & BIGGER */
-.profile-section {
-    text-align: center;
-    margin-bottom: 1.5rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.profile-photo {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    box-shadow: 2px 2px 0px rgba(255, 255, 255, 0.3);
-    display: block;
-}
 
 /* Header */
 .header {
