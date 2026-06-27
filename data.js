@@ -210,5 +210,39 @@ window.SITE_DATA = {
             "priority": 11,
             "visible": true
         },
+        {
+            "id": "moovie",
+            "title": "moovie",
+            "description": " free website for watching movies and series for completely free Android iOS computer",
+            "keywords": [
+                "moovie",
+                "free movies",
+                "movies",
+                "website"
+            ],
+            "thumbnail": "Assets/Links thumbnail/moovie.fun.webp",
+            "buttonText": " go to website",
+            "ctaText": "Follow @snap_blitz for more content",
+            "followRedirectUrl": "https://moovie.fun/",
+            "priority": 12,
+            "visible": true
+        },
+        {
+            "id": "cineby",
+            "title": "cineby",
+            "description": " free website for watching movies and series for completely free",
+            "keywords": [
+                "cineby",
+                "free movies",
+                "movies",
+                "website"
+            ],
+            "thumbnail": "Assets/Links thumbnail/cineby.at.webp",
+            "buttonText": " go to website",
+            "ctaText": "Follow @snap_blitz for more content",
+            "followRedirectUrl": "https://www.cineby.at/",
+            "priority": 13,
+            "visible": true
+        },
     ]
 };
