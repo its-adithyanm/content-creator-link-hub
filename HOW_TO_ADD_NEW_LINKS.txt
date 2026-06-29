@@ -1,0 +1,173 @@
+HOW TO ADD NEW LINKS & RESOURCES TO SNAP BLITZ
+==============================================
+
+# Section 1 — Introduction
+
+This project intentionally has no backend database. 
+
+All resources, links, and content cards on the website are managed completely by manually editing the `links` array inside the `data.js` file. 
+
+Because it's a static site, any time you edit and save the `data.js` file, the changes will automatically update on the website upon refresh.
+
+
+# Section 2 — Normal Redirect Link
+
+A normal redirect link is the most common resource type. When users click it, they will be asked to follow your social media before being redirected to the target URL.
+
+Properties:
+* id - A unique identifier for the link (e.g., "premiere-pro").
+* title - The main heading displayed on the card.
+* description - A short sentence explaining what the resource is.
+* keywords - An array of search terms (e.g., ["video", "editor"]).
+* thumbnail - The path to the image displayed on the card.
+* buttonText - The text displayed on the main button (e.g., "Download").
+* ctaText - The call-to-action text shown in the follow modal (e.g., "Follow @snap_blitz to access this resource").
+* followRedirectUrl - The actual destination URL the user is sent to after verification.
+* priority - A number deciding the display order (lower = first).
+* visible - Set to true or false to show or hide the link.
+
+Thumbnail images should be saved in the `Assets/Links thumbnail/` directory.
+
+
+# Section 3 — AI Prompt Template
+
+You can add an AI Prompt resource that displays a copyable text prompt directly on the website instead of redirecting the user.
+
+Properties:
+* type: "prompt" - This must be explicitly set so the system knows it's a prompt.
+* title - The main heading displayed on the card.
+* promptText - The actual AI prompt content that users can copy.
+* buttonText - Text for the button (e.g., "View Prompt").
+* thumbnail - Path to the image.
+* keywords - Array of search terms to help users find it.
+* priority - Display order number.
+* visible - Set to true to display.
+
+
+# Section 4 — YouTube Embed Template
+
+You can add a YouTube video that plays directly inside a modal on your website.
+
+Properties:
+* type: "embed" - This must be explicitly set.
+* title - The title shown on the card.
+* description - The description shown on the card.
+* embedTitle - The title shown at the top of the video modal.
+* youtubeEmbedUrl - The YouTube embed link (e.g., "https://www.youtube.com/embed/VIDEO_ID").
+* actionButtons - An array of buttons to show below the video.
+* thumbnail - Path to the image.
+* priority - Display order number.
+* visible - Set to true to display.
+
+Action Buttons:
+You can provide multiple action buttons under a video (e.g., Download, Website, Telegram, Instagram). 
+Each button in the `actionButtons` array needs a `text`, `url`, and `style` (usually "primary" or "secondary").
+
+
+# Section 5 — Priority
+
+The `priority` field determines the order in which resources appear on the website.
+
+Example:
+Priority 1
+Priority 2
+Priority 3
+
+Lower numbers appear first. A resource with priority 1 will show up before a resource with priority 5.
+
+
+# Section 6 — Visible
+
+You can temporarily hide resources without deleting them from `data.js`.
+
+* visible: true - The resource is active and visible on the website.
+* visible: false - The resource is completely hidden from the website and search results.
+
+
+# Section 7 — Keywords
+
+Keywords drastically improve the search experience. They are hidden from the UI but are actively used by the search algorithm.
+
+If you have a resource named "Premiere Pro", users might search for "video editor". 
+By adding keywords, the resource will show up even if the title doesn't match perfectly.
+
+Examples:
+* For Premiere Pro: ["video", "editor", "vfx", "adobe"]
+* For an AI Prompt: ["chatgpt", "midjourney", "prompt", "ai"]
+* For a YouTube video: ["tutorial", "guide", "youtube", "watch"]
+
+
+# Section 8 — Thumbnail Images
+
+All thumbnail images should be saved in the `Assets/Links thumbnail/` folder inside your project.
+
+The correct path format always starts with that folder name. 
+You must include the file extension (e.g., .webp, .png, .jpg).
+
+Examples:
+* "Assets/Links thumbnail/premiere.webp"
+* "Assets/Links thumbnail/ai-prompt-1.png"
+* "Assets/Links thumbnail/video-cover.jpg"
+
+
+# Section 9 — Complete Examples
+
+Here are three fully completed, copy-paste ready examples you can insert directly into the `links` array in `data.js`.
+
+1. Normal Redirect Link:
+
+{
+    "id": "photoshop-2024",
+    "title": "Photoshop 2024",
+    "description": "Industry standard image editing software",
+    "keywords": ["photo", "editor", "photoshop", "adobe", "graphics"],
+    "thumbnail": "Assets/Links thumbnail/photoshop.webp",
+    "buttonText": "Download",
+    "ctaText": "Follow @snap_blitz to download Photoshop 2024",
+    "followRedirectUrl": "https://example.com/photoshop",
+    "priority": 1,
+    "visible": true
+}
+
+
+2. AI Prompt:
+
+{
+    "id": "viral-reel-prompt",
+    "type": "prompt",
+    "title": "Viral Instagram Reel Prompt",
+    "promptText": "Act as an expert social media manager. Write a 30-second Instagram Reel script about...",
+    "keywords": ["ai", "prompt", "chatgpt", "instagram", "script", "viral"],
+    "thumbnail": "Assets/Links thumbnail/ai-prompt.webp",
+    "buttonText": "View Prompt",
+    "priority": 2,
+    "visible": true
+}
+
+
+3. YouTube Embed:
+
+{
+    "id": "editing-tutorial-1",
+    "type": "embed",
+    "title": "Master Video Editing in 10 Minutes",
+    "description": "Learn the best shortcuts for faster editing",
+    "embedTitle": "Editing Masterclass",
+    "youtubeEmbedUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    "keywords": ["tutorial", "video", "youtube", "editing", "guide"],
+    "thumbnail": "Assets/Links thumbnail/tutorial-cover.webp",
+    "actionButtons": [
+        {
+            "text": "Download Project Files",
+            "url": "https://example.com/files",
+            "style": "primary"
+        },
+        {
+            "text": "Join Telegram",
+            "url": "https://t.me/snapblitz",
+            "style": "secondary"
+        }
+    ],
+    "priority": 3,
+    "visible": true
+}

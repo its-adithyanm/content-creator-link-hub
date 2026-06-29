@@ -249,8 +249,6 @@
         card.className = 'result-card';
         // Cap animation delay to prevent CPU spike on large lists
         card.style.animationDelay = `${Math.min(index, 20) * 0.05}s`;
-        card.setAttribute('role', 'button');
-        card.setAttribute('tabindex', '0');
         card.dataset.index = index;
 
         const highlightedTitle = highlightMatches(item.title || 'Untitled', item.matches, 'title');
@@ -265,7 +263,7 @@
             </div>
             <p class="card-description">${highlightedDescription}</p>
             <div class="card-action">
-                <button class="action-btn" tabindex="-1">
+                <button class="action-btn">
                     ${buttonText}
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="9 18 15 12 9 6"></polyline>
@@ -278,7 +276,9 @@
     }
 
     function handleGridClick(e) {
-        const card = e.target.closest('.result-card');
+        const btn = e.target.closest('.action-btn');
+        if (!btn) return;
+        const card = btn.closest('.result-card');
         if (!card) return;
         const index = parseInt(card.dataset.index, 10);
         const item = currentRenderedResults[index];
@@ -287,7 +287,9 @@
 
     function handleGridKeydown(e) {
         if (e.key === 'Enter' || e.key === ' ') {
-            const card = e.target.closest('.result-card');
+            const btn = e.target.closest('.action-btn');
+            if (!btn) return;
+            const card = btn.closest('.result-card');
             if (!card) return;
             e.preventDefault();
             const index = parseInt(card.dataset.index, 10);
@@ -325,7 +327,9 @@
     }
 
     function handleLatestGridClick(e) {
-        const card = e.target.closest('.result-card');
+        const btn = e.target.closest('.action-btn');
+        if (!btn) return;
+        const card = btn.closest('.result-card');
         if (!card) return;
         const index = parseInt(card.dataset.index, 10);
         const item = currentLatestResults[index];
@@ -334,7 +338,9 @@
 
     function handleLatestGridKeydown(e) {
         if (e.key === 'Enter' || e.key === ' ') {
-            const card = e.target.closest('.result-card');
+            const btn = e.target.closest('.action-btn');
+            if (!btn) return;
+            const card = btn.closest('.result-card');
             if (!card) return;
             e.preventDefault();
             const index = parseInt(card.dataset.index, 10);
@@ -344,36 +350,7 @@
     }
 
     function highlightMatches(text, matches, key) {
-        if (!matches || !text) return text;
-
-        const relevantMatches = matches.filter(m => m.key === key);
-        if (relevantMatches.length === 0) return text;
-
-        const highlights = new Set();
-        relevantMatches.forEach(match => {
-            match.indices.forEach(([start, end]) => {
-                for (let i = start; i <= end; i++) {
-                    highlights.add(i);
-                }
-            });
-        });
-
-        let result = '';
-        let inMark = false;
-        for (let i = 0; i < text.length; i++) {
-            const shouldHighlight = highlights.has(i);
-            if (shouldHighlight && !inMark) {
-                result += '<mark>';
-                inMark = true;
-            } else if (!shouldHighlight && inMark) {
-                result += '</mark>';
-                inMark = false;
-            }
-            result += text[i];
-        }
-        if (inMark) result += '</mark>';
-
-        return result;
+        return text || '';
     }
 
     function showNoResults() {
